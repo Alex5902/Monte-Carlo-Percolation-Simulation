@@ -3,6 +3,8 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.HashSet;
 import java.util.Set;
+import com.formdev.flatlaf.FlatDarkLaf;
+import com.formdev.flatlaf.FlatLightLaf;
 
 public class PercolationVisualiser extends JPanel {
     private static final int CELL_SIZE = 15;
@@ -71,7 +73,7 @@ public class PercolationVisualiser extends JPanel {
                 } else {
                     g.setColor(Color.BLACK);
                 }
-                g.fillRect(x, y, CELL_SIZE, CELL_SIZE);
+                g.fillRoundRect(x, y, CELL_SIZE, CELL_SIZE, 4, 4);
                 g.setColor(Color.GRAY);
                 g.drawRect(x, y, CELL_SIZE, CELL_SIZE);
             }
@@ -79,6 +81,16 @@ public class PercolationVisualiser extends JPanel {
     }
 
     public static void main(String[] args) {
+        boolean isDark = true;
+        try {
+            UIManager.setLookAndFeel(new FlatDarkLaf());
+            UIManager.put("Button.arc", 999);
+            UIManager.put("Component.arc", 12);
+            UIManager.put("defaultFont", new Font("Segoe UI", Font.PLAIN, 13));
+        } catch (Exception e) {
+            System.err.println("Failed to initialize FlatLaf.");
+        }
+
         JFrame frame = new JFrame("Percolation Visualiser");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setLayout(new BorderLayout());
@@ -94,29 +106,52 @@ public class PercolationVisualiser extends JPanel {
         speedSlider.setPaintLabels(true);
         speedSlider.setBorder(BorderFactory.createTitledBorder("Speed"));
 
+        JLabel gridSizeLabel = new JLabel("Grid Size:");
         JSpinner sizeSpinner = new JSpinner(new SpinnerNumberModel(20, 5, 100, 1));
-        sizeSpinner.setBorder(BorderFactory.createTitledBorder("Grid Size"));
+        sizeSpinner.setPreferredSize(new Dimension(60, 25));
+
 
         JButton resetButton = new JButton("Reset");
 
+        JCheckBox themeToggle = new JCheckBox("Dark Mode", true);
+        themeToggle.addActionListener(e -> {
+            try {
+                if (themeToggle.isSelected()) {
+                    UIManager.setLookAndFeel(new FlatDarkLaf());
+                } else {
+                    UIManager.setLookAndFeel(new FlatLightLaf());
+                }
+                SwingUtilities.updateComponentTreeUI(frame);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        });
+
         JPanel topPanel = new JPanel(new FlowLayout());
         topPanel.add(speedSlider);
+        topPanel.add(gridSizeLabel);
         topPanel.add(sizeSpinner);
         topPanel.add(resetButton);
+        topPanel.add(themeToggle);
         frame.add(topPanel, BorderLayout.NORTH);
 
         JPanel visualiserHolder = new JPanel(new BorderLayout());
         frame.add(visualiserHolder, BorderLayout.CENTER);
 
-        // Initial visualiser panel
         PercolationVisualiser visualiser = new PercolationVisualiser((int) sizeSpinner.getValue(), statusLabel, speedSlider);
-        visualiserHolder.add(visualiser, BorderLayout.CENTER);
+        JPanel paddedGrid = new JPanel(new BorderLayout());
+        paddedGrid.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        paddedGrid.add(visualiser, BorderLayout.CENTER);
+        visualiserHolder.add(paddedGrid, BorderLayout.CENTER);
 
         resetButton.addActionListener(e -> {
             visualiserHolder.removeAll();
             int newSize = (int) sizeSpinner.getValue();
             PercolationVisualiser newVisualiser = new PercolationVisualiser(newSize, statusLabel, speedSlider);
-            visualiserHolder.add(newVisualiser, BorderLayout.CENTER);
+            JPanel newPaddedGrid = new JPanel(new BorderLayout());
+            newPaddedGrid.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+            newPaddedGrid.add(newVisualiser, BorderLayout.CENTER);
+            visualiserHolder.add(newPaddedGrid, BorderLayout.CENTER);
             visualiserHolder.revalidate();
             visualiserHolder.repaint();
         });
