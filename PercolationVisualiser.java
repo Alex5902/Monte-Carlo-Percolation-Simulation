@@ -6,12 +6,11 @@ import java.util.Set;
 
 public class PercolationVisualiser extends JPanel {
     private static final int CELL_SIZE = 15;
-    private final Percolation percolation;
-    private final int n;
+    private Percolation percolation;
+    private int n;
     private final Set<Point> opened = new HashSet<>();
     private final JLabel statusLabel;
     private final JSlider speedSlider;
-
     private int delay = 10;
 
     public PercolationVisualiser(int n, JLabel statusLabel, JSlider speedSlider) {
@@ -23,10 +22,8 @@ public class PercolationVisualiser extends JPanel {
         setPreferredSize(new Dimension(n * CELL_SIZE, n * CELL_SIZE));
         setBackground(Color.BLACK);
 
-        // Update delay dynamically
         speedSlider.addChangeListener(e -> delay = 100 - speedSlider.getValue());
 
-        // Start the simulation
         new Thread(this::simulate).start();
     }
 
@@ -45,7 +42,7 @@ public class PercolationVisualiser extends JPanel {
                 } catch (InterruptedException ignored) {}
             }
         }
-        updateStatus(); // Final update
+        updateStatus();
     }
 
     private void updateStatus() {
@@ -82,37 +79,47 @@ public class PercolationVisualiser extends JPanel {
     }
 
     public static void main(String[] args) {
-        int n = 20;
-        if (args.length > 0) {
-            n = Integer.parseInt(args[0]);
-        }
-
-        // Create window
-        JFrame frame = new JFrame("Percolation Visualizer");
+        JFrame frame = new JFrame("Percolation Visualiser");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setLayout(new BorderLayout());
 
-        // Stats label
         JLabel statusLabel = new JLabel("Simulation starting...", SwingConstants.CENTER);
         statusLabel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         frame.add(statusLabel, BorderLayout.SOUTH);
 
-        // Speed slider
-        JSlider speedSlider = new JSlider(1, 99, 90); // inverse delay
+        JSlider speedSlider = new JSlider(1, 99, 90);
         speedSlider.setMajorTickSpacing(20);
         speedSlider.setMinorTickSpacing(5);
         speedSlider.setPaintTicks(true);
         speedSlider.setPaintLabels(true);
         speedSlider.setBorder(BorderFactory.createTitledBorder("Speed"));
 
-        // GUI panel (top)
-        JPanel controlPanel = new JPanel(new BorderLayout());
-        controlPanel.add(speedSlider, BorderLayout.CENTER);
-        frame.add(controlPanel, BorderLayout.NORTH);
+        JSpinner sizeSpinner = new JSpinner(new SpinnerNumberModel(20, 5, 100, 1));
+        sizeSpinner.setBorder(BorderFactory.createTitledBorder("Grid Size"));
 
-        // Simulation panel (center)
-        PercolationVisualiser visualiser = new PercolationVisualiser(n, statusLabel, speedSlider);
-        frame.add(visualiser, BorderLayout.CENTER);
+        JButton resetButton = new JButton("Reset");
+
+        JPanel topPanel = new JPanel(new FlowLayout());
+        topPanel.add(speedSlider);
+        topPanel.add(sizeSpinner);
+        topPanel.add(resetButton);
+        frame.add(topPanel, BorderLayout.NORTH);
+
+        JPanel visualiserHolder = new JPanel(new BorderLayout());
+        frame.add(visualiserHolder, BorderLayout.CENTER);
+
+        // Initial visualiser panel
+        PercolationVisualiser visualiser = new PercolationVisualiser((int) sizeSpinner.getValue(), statusLabel, speedSlider);
+        visualiserHolder.add(visualiser, BorderLayout.CENTER);
+
+        resetButton.addActionListener(e -> {
+            visualiserHolder.removeAll();
+            int newSize = (int) sizeSpinner.getValue();
+            PercolationVisualiser newVisualiser = new PercolationVisualiser(newSize, statusLabel, speedSlider);
+            visualiserHolder.add(newVisualiser, BorderLayout.CENTER);
+            visualiserHolder.revalidate();
+            visualiserHolder.repaint();
+        });
 
         frame.pack();
         frame.setLocationRelativeTo(null);
