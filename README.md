@@ -1,6 +1,6 @@
 # Monte Carlo Percolation Simulator (Java + Python)
 
-This project simulates **percolation in an N×N grid** using Monte Carlo methods, Union-Find data structures, multithreading, and a Swing GUI — all fully containerized with Docker.
+This project simulates **percolation in an N×N grid** using Monte Carlo methods, Union-Find data structures, multithreading, and a Swing GUI — all fully containerised with Docker.
 
 ---
 
