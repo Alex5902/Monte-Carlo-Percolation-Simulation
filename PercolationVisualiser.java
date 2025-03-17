@@ -139,22 +139,24 @@ public class PercolationVisualiser extends JPanel {
         frame.add(visualiserHolder, BorderLayout.CENTER);
 
         PercolationVisualiser visualiser = new PercolationVisualiser((int) sizeSpinner.getValue(), statusLabel, speedSlider);
-        JPanel paddedGrid = new JPanel(new BorderLayout());
+        JPanel paddedGrid = new JPanel(new GridBagLayout());
         paddedGrid.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-        paddedGrid.add(visualiser, BorderLayout.CENTER);
+        paddedGrid.add(visualiser, new GridBagConstraints());
         visualiserHolder.add(paddedGrid, BorderLayout.CENTER);
 
         resetButton.addActionListener(e -> {
             visualiserHolder.removeAll();
             int newSize = (int) sizeSpinner.getValue();
             PercolationVisualiser newVisualiser = new PercolationVisualiser(newSize, statusLabel, speedSlider);
-            JPanel newPaddedGrid = new JPanel(new BorderLayout());
+            JPanel newPaddedGrid = new JPanel(new GridBagLayout());
             newPaddedGrid.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-            newPaddedGrid.add(newVisualiser, BorderLayout.CENTER);
+            newPaddedGrid.add(newVisualiser, new GridBagConstraints());
             visualiserHolder.add(newPaddedGrid, BorderLayout.CENTER);
             visualiserHolder.revalidate();
             visualiserHolder.repaint();
-        });
+
+            frame.pack();
+        });        
 
         frame.pack();
         frame.setLocationRelativeTo(null);
