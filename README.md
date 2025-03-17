@@ -1,10 +1,10 @@
-# 🧪 Monte Carlo Percolation Simulator (Java)
+# Monte Carlo Percolation Simulator (Java + Python)
 
 This project simulates **percolation in an N×N grid** using Monte Carlo methods, Union-Find data structures, multithreading, and a Swing GUI — all fully containerized with Docker.
 
 ---
 
-## ✨ Features
+## Features
 
 **Percolation Simulation** using Union-Find  
 **Monte Carlo Estimation** of percolation threshold  
@@ -16,13 +16,13 @@ This project simulates **percolation in an N×N grid** using Monte Carlo methods
 
 ---
 
-## 📸 GUI Preview
+## GUI Preview
 
 ![Dark Mode](grid_dark_mode.png)  |  ![Light Mode](grid_light_mode.png)
 
 ---
 
-## 🧠 How Percolation Works
+## How Percolation Works
 
 Given an N×N grid where each site is either **open** or **blocked**, we say the system **percolates** if there’s a connected path from the top row to the bottom through open sites.
 
@@ -30,7 +30,7 @@ This simulator estimates the **critical threshold p\*** where percolation become
 
 ---
 
-## 📈 Percolation Probability Curve
+## Percolation Probability Curve
 
 Using the Python plot script, we simulate the probability that an N×N grid percolates at different site vacancy probabilities `p`. The result is a sigmoid curve that approximates the **percolation threshold p\***.
 
@@ -38,7 +38,7 @@ Using the Python plot script, we simulate the probability that an N×N grid perc
 
 ---
 
-## 🐳 Running with Docker
+## Running with Docker
 
 ```bash
 # Build Docker image
